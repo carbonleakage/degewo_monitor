@@ -23,6 +23,16 @@ def fetchData(url):
         print(f"Received status {response.status_code} when trying to access {url}")
         return None
 
+def merge_properties(x):
+    '''
+    Concats the 'name' property of some fields
+    '''
+    props = ""
+    for i in x:
+        props += i['name'] + ";"
+
+    return props
+
 if __name__ == "__main__":
     # Initialise variables
     base_url = "https://immosuche.degewo.de"
@@ -43,6 +53,7 @@ if __name__ == "__main__":
         r = fetchData(next_pg)
         temp = pd.json_normalize(r['immos'])
         temp['collection_timestamp'] = ftimestamp
+        temp['property_categories'] = temp['property_categories'].apply(merge_properties)
 
         df = pd.concat([df, temp], ignore_index=True)
 
@@ -51,5 +62,6 @@ if __name__ == "__main__":
             next_pg = base_url + r['pagination']['next_page']
         except KeyError:
             break
-    
+    relevant_columns = [i for i in df.columns if i not in ["collection_timestamp", "external_data", "furnishings", 'special_offers']]
+    df.drop_duplicates(subset = relevant_columns, inplace=True)
     df.to_parquet("extract.parquet.gzip", compression = 'gzip')
