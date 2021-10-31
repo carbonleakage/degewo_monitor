@@ -1,4 +1,4 @@
-#!/home/ubuntu/Python_Projects/degewo_monitor/venv/bin
+#!/home/ubuntu/Python_Projects/degewo_monitor/venv/bin/python
 import requests
 import pandas as pd
 from datetime import datetime
