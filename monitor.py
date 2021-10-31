@@ -1,6 +1,7 @@
 import requests
 import pandas as pd
 from datetime import datetime
+import os
 
 def fetchData(url):
     '''
@@ -25,9 +26,13 @@ if __name__ == "__main__":
     # Initialise variables
     base_url = "https://immosuche.degewo.de"
     next_pg = base_url + "/de/search.json"
-    df = pd.DataFrame()
     ftimestamp = datetime.now().strftime("%Y%m%d_%H%M")
-    
+    output_file = 'extract.parquet.gzip'
+
+    if os.path.exists(output_file):
+        df = pd.read_parquet(output_file)
+    else:
+        df = pd.DataFrame()
     
     while next_pg is not None:
 
@@ -36,6 +41,7 @@ if __name__ == "__main__":
 
         r = fetchData(next_pg)
         temp = pd.json_normalize(r['immos'])
+        temp['collection_timestamp'] = ftimestamp
 
         df = pd.concat([df, temp], ignore_index=True)
 
@@ -45,4 +51,4 @@ if __name__ == "__main__":
         except KeyError:
             break
     
-    df.to_parquet(f"extract_{ftimestamp}.parquet.gzip", compression = 'gzip')
+    df.to_parquet("extract.parquet.gzip", compression = 'gzip')
