@@ -62,6 +62,7 @@ if __name__ == "__main__":
             next_pg = base_url + r['pagination']['next_page']
         except KeyError:
             break
-    relevant_columns = [i for i in df.columns if i not in ["collection_timestamp", "external_data", "furnishings", 'special_offers']]
+    # relevant_columns = [i for i in df.columns if i not in ["collection_timestamp", "external_data", "furnishings", 'special_offers']]
+    relevant_columns = ["id"]
     df.drop_duplicates(subset = relevant_columns, inplace=True)
     df.to_parquet("extract.parquet.gzip", compression = 'gzip')
