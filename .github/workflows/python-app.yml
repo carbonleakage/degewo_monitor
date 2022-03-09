@@ -32,8 +32,10 @@ jobs:
     - name: Update files on GitHub
       uses: test-room-7/action-update-file@v1.6.0
       with:
-          file-path: ./
-          commit-msg: Update resources
+          file-path:
+            extract.parquet.gzip
+            scratchfile.ipynb
+          commit-msg: Update outputs
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
 
